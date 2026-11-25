@@ -26,6 +26,12 @@ jobs:
 
       # Release key from repo secrets; falls back to the auto debug key so the
       # workflow still produces an installable APK before secrets are set.
+      - name: Apply RTQ NOW strings and developer photo
+        run: |
+          python3 scripts/rtqnow_apply_strings.py app/src/main/res
+          base64 -d scripts/developer_photo.webp.b64 > app/src/main/res/drawable-nodpi/developer_photo.webp
+          echo "$(cat scripts/developer_photo.sha256)  app/src/main/res/drawable-nodpi/developer_photo.webp" | sha256sum -c -
+
       - name: Decode release keystore (optional)
         if: ${{ secrets.KEYSTORE_BASE64 != '' }}
         run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
