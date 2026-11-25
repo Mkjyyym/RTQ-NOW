@@ -52,6 +52,12 @@ jobs:
               frames = b"".join(struct.pack("<h", int(8000 * math.sin(2 * math.pi * freq * i / 22050))) for i in range(22050 * 3))
               w.writeframes(frames); w.close()
           PY
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          ls -la /dev/kvm
       - name: Run emulator smoke test
         uses: reactivecircus/android-emulator-runner@v2
         with:
