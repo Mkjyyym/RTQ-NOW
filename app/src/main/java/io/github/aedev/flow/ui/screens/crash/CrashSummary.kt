@@ -4,15 +4,15 @@ import java.net.URLEncoder
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-private const val NEW_ISSUE_URL = "https://github.com/Flow-Tube/Flow/issues/new"
+private const val NEW_ISSUE_URL = "https://github.com/Mkjyyym/RTQ-NOW/issues/new"
 private const val APP_PACKAGE = "io.github.aedev.flow"
 private const val MAX_URL_LOG_CHARS = 1_500
 private const val MAX_URL_ACTUAL_CHARS = 300
 private const val MAX_URL_CONTEXT_CHARS = 700
 private const val CONTEXT_STEPS = 5
 private const val STEPS_HEADER = "State/Cache Updates Before Crash"
-private const val UNKNOWN_STEPS = "Not known. Flow crashed during normal use; the stack trace is under Logs."
-private const val EXPECTED = "Flow keeps running."
+private const val UNKNOWN_STEPS = "Not known. NOW crashed during normal use; the stack trace is under Logs."
+private const val EXPECTED = "NOW keeps running."
 private const val TOP_FRAMES = 6
 private const val OUTER_FRAMES = 2
 private const val CAUSE_FRAMES = 4
@@ -184,7 +184,7 @@ fun CrashSummary.issueUrl(): String {
             device?.let { "device" to it },
             "steps" to UNKNOWN_STEPS,
             "expected" to EXPECTED,
-            "actual" to "Flow crashed with $error".take(MAX_URL_ACTUAL_CHARS),
+            "actual" to "NOW crashed with $error".take(MAX_URL_ACTUAL_CHARS),
             crashContext()?.let { "context" to it },
             "logs" to log,
         )
