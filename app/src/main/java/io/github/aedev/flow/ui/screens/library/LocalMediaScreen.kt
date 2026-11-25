@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Checklist
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.GridView
+import androidx.compose.material.icons.outlined.LibraryMusic
 import androidx.compose.material.icons.outlined.QueuePlayNext
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
@@ -73,6 +74,7 @@ fun LocalMediaScreen(
     onPlayVideos: (items: List<LocalMediaItem>, startIndex: Int, shuffle: Boolean) -> Unit,
     onPlayMusic: (items: List<LocalMediaItem>, startIndex: Int, shuffle: Boolean) -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenMusicLibrary: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LocalMediaViewModel = hiltViewModel(),
 ) {
@@ -240,6 +242,8 @@ fun LocalMediaScreen(
                 },
                 onToggleGrid = { viewModel.setVideosAsGrid(!asGrid) },
                 onOpenSettings = onOpenSettings,
+                onOpenMusicLibrary = onOpenMusicLibrary,
+                showMusicLibrary = !isVideos,
             )
         },
         containerColor = MaterialTheme.colorScheme.background,
@@ -361,6 +365,8 @@ private fun LocalMediaTopBar(
     onSelectAll: () -> Unit,
     onToggleGrid: () -> Unit,
     onOpenSettings: () -> Unit,
+    onOpenMusicLibrary: () -> Unit,
+    showMusicLibrary: Boolean,
 ) {
     FlowTopBar(
         title = title,
@@ -384,6 +390,11 @@ private fun LocalMediaTopBar(
                 IconButton(
                     onClick = onSelect,
                 ) { Icon(Icons.Default.Checklist, contentDescription = stringResource(R.string.select_videos)) }
+            }
+            if (showMusicLibrary) {
+                IconButton(onClick = onOpenMusicLibrary) {
+                    Icon(Icons.Outlined.LibraryMusic, contentDescription = stringResource(R.string.local_library_title))
+                }
             }
             IconButton(onClick = onOpenSettings) {
                 Icon(Icons.Outlined.Settings, contentDescription = stringResource(R.string.settings_local_media_title))
