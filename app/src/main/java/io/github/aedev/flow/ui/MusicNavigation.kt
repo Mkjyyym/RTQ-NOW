@@ -46,6 +46,9 @@ internal fun NavGraphBuilder.musicRoutes(
             onSearchClick = {
                 navController.navigate("musicSearch")
             },
+            onSpotifyClick = {
+                navController.navigate("spotify")
+            },
             onRecognizeClick = {
                 navController.navigate("musicRecognize")
             },
