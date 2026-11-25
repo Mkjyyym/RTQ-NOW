@@ -67,7 +67,7 @@ private val Spacing = 12.dp
 private val CardPadding = 16.dp
 private val LabelWidth = 88.dp
 private val BarPadding = 20.dp
-private const val CLIP_LABEL = "Flow crash report"
+private const val CLIP_LABEL = "NOW crash report"
 private const val BROWSER_PROBE = "https://"
 
 // A github.com link can be caught by the GitHub app; crash issues that skipped the form arrive as a bare title (#2055).
