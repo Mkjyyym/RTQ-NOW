@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="local_library_title">Music library</string>
+    <string name="local_library_songs_tab">Songs</string>
+    <string name="local_library_albums_tab">Albums</string>
+    <string name="local_library_artists_tab">Artists</string>
+    <string name="local_library_empty">No music found on this device</string>
+    <string name="local_library_grant_access">Grant access to your music</string>
+    <string name="local_library_search_hint">Search songs, albums, artists</string>
+    <plurals name="local_library_song_count">
+        <item quantity="one">%1$d song</item>
+        <item quantity="other">%1$d songs</item>
+    </plurals>
+</resources>
