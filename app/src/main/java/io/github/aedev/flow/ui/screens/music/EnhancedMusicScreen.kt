@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.GraphicEq
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.rounded.Mic
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -67,6 +68,7 @@ fun EnhancedMusicScreen(
     onArtistClick: (String) -> Unit = {},
     onSearchClick: () -> Unit = {},
     onRecognizeClick: () -> Unit = {},
+    onSpotifyClick: () -> Unit = {},
     onAlbumClick: (String) -> Unit = {},
     onMoodsClick: (MoodAndGenres.Item?) -> Unit = {},
     onPlaylistClick: (String) -> Unit = {},
@@ -187,6 +189,9 @@ fun EnhancedMusicScreen(
                 FlowTopBar(
                     title = stringResource(R.string.screen_title_music),
                     actions = {
+                        IconButton(onClick = onSpotifyClick) {
+                            Icon(Icons.Filled.GraphicEq, "Spotify")
+                        }
                         IconButton(onClick = onSearchClick) {
                             Icon(Icons.Outlined.Search, stringResource(R.string.search))
                         }
