@@ -37,7 +37,6 @@ import io.github.aedev.flow.player.EnhancedPlayerManager
 import io.github.aedev.flow.player.GlobalPlayerState
 import io.github.aedev.flow.player.SleepTimerManager
 import io.github.aedev.flow.sync2.service.LinkedCatchUp
-import io.github.aedev.flow.ui.components.donation.DonationPromptHost
 import io.github.aedev.flow.ui.components.equalizer.LocalEqualizerState
 import io.github.aedev.flow.ui.components.layout.LocalFlowBottomInsets
 import io.github.aedev.flow.ui.components.layout.LocalFlowSnackbarHostState
@@ -601,9 +600,5 @@ fun FlowApp(
             navController.navigate(TIMES_UP_ROUTE) { launchSingleTop = true }
         }
 
-        DonationPromptHost(
-            enabled = needsOnboarding == false && !isInPipMode && !playerVisible,
-            onNavigateToDonations = { navController.navigate("donations") },
-        )
     }
 }
