@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="about_based_on_title">Based on Flow</string>
+    <string name="about_based_on_summary">Original project by A-EDev, GNU GPL v3</string>
+</resources>
