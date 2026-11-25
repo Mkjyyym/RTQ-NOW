@@ -60,7 +60,7 @@ android {
         applicationId = "app.rtqnow"
         minSdk = 26
         targetSdk = 36
-        versionCode = 20
+        versionCode = 21
         versionName = "3.0.5"
 
         buildConfigField("int", "NIGHTLY_RUN", "0")
