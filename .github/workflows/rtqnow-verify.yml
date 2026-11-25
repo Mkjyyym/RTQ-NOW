@@ -1,0 +1,60 @@
+name: RTQ NOW verify release APK
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    name: Emulator check of release rtqnow-52 universal APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Download release APK and check hash
+        run: |
+          mkdir -p apk samples shots dumps
+          curl -fsSL -o apk/app-github-universal-debug.apk https://github.com/Mkjyyym/RTQ-NOW/releases/download/rtqnow-52/app-github-universal-debug.apk
+          echo "dfdd5f59e71a52e1c8d27c39148ae0a31669bfa06ba3e9d42dd4f751fa8936b6  apk/app-github-universal-debug.apk" | sha256sum -c -
+      - name: Prepare sample music files
+        run: |
+          python3 - <<'PY'
+          import wave, struct, math
+          for name, freq in [("tone_alpha", 440), ("tone_beta", 550), ("tone_gamma", 660)]:
+              w = wave.open("samples/" + name + ".wav", "w")
+              w.setnchannels(1); w.setsampwidth(2); w.setframerate(22050)
+              frames = b"".join(struct.pack("<h", int(8000 * math.sin(2 * math.pi * freq * i / 22050))) for i in range(22050 * 3))
+              w.writeframes(frames); w.close()
+          PY
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          ls -l /dev/kvm
+      - name: Run emulator checks
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          target: default
+          disable-animations: true
+          script: bash scripts/rtqnow_smoke.sh
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rtqnow-verify-evidence
+          path: |
+            shots/*.png
+            dumps/*
+      - name: Publish evidence as a pre-release (built-in token)
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="rtqnow-verify-${GITHUB_RUN_NUMBER}"
+          gh release create "$TAG" shots/*.png dumps/crash.txt dumps/logcat_tail.txt --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --title "RTQ NOW emulator evidence $TAG" --notes "Emulator screenshots of release rtqnow-52 universal APK. Evidence only, not an app build."
