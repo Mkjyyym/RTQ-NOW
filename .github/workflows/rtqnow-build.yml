@@ -23,26 +23,11 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
 
-      # Release key from repo secrets; falls back to the auto debug key so the
-      # workflow still produces an installable APK before secrets are set.
-      - name: Decode release keystore (optional)
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > release.keystore
-
-      - name: Build
-        env:
-          STORE_PASSWORD: ${{ secrets.STORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: |
-          if [ -f release.keystore ]; then
-            ./gradlew :app:assembleGithubRelease
-          else
-            ./gradlew :app:assembleGithubDebug
-          fi
+      - name: Build debug APK
+        run: ./gradlew :app:assembleGithubDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v7
         with:
           name: rtqnow-apk
-          path: app/build/outputs/apk/github/*/*.apk
+          path: app/build/outputs/apk/github/debug/*.apk
