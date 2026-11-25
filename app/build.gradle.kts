@@ -57,7 +57,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "io.github.aedev.flow"
+        applicationId = "app.rtqnow"
         minSdk = 26
         targetSdk = 36
         versionCode = 20
