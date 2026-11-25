@@ -11,6 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import io.github.aedev.flow.data.local.PlaylistRepository
 import io.github.aedev.flow.data.localmedia.LocalMediaIds
+import io.github.aedev.flow.spotify.ui.spotifyRoutes
 import io.github.aedev.flow.data.localmedia.toMusicTrack
 import io.github.aedev.flow.data.localmedia.toVideo
 import io.github.aedev.flow.data.model.Video
@@ -549,7 +550,7 @@ fun NavGraphBuilder.flowAppGraph(
 
     musicRoutes(navController, mediaNavigator, currentRoute, playerViewModel, defaultStartRoute, onMusicStarted)
 
-    io.github.aedev.flow.spotify.ui.spotifyRoutes(navController, onMusicStarted)
+    spotifyRoutes(navController, onMusicStarted)
 
     widgetPlaybackRoutes(navController, defaultStartRoute, playerViewModel, onMusicStarted)
 
