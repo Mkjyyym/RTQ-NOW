@@ -88,8 +88,8 @@ class VideoDownloadManager
     ) {
         companion object {
             private const val TAG = "VideoDownloadManager"
-            const val VIDEO_DIR = "Flow"
-            const val AUDIO_DIR = "Flow"
+            const val VIDEO_DIR = "NOW"
+            const val AUDIO_DIR = "NOW"
             private const val STAGING_DIR = "staging"
             private const val INTERNAL_DIR = "downloads"
 
