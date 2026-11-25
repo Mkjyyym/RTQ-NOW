@@ -18,6 +18,7 @@
 package io.github.aedev.flow.spotify.host
 
 import io.github.aedev.flow.network.ProxyAwareClient
+import kotlinx.serialization.Serializable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -27,6 +28,7 @@ import java.util.TimeZone
 
 enum class SpotifyHttpMethod { Get, Post, Put, Delete }
 
+@Serializable
 data class SpotifyCookie(val name: String, val value: String)
 
 data class SpotifyHttpResponse(
