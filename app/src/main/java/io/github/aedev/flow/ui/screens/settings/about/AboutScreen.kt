@@ -1,6 +1,7 @@
 package io.github.aedev.flow.ui.screens.settings.about
 
 import android.os.Build
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,7 +42,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.pm.PackageInfoCompat
-import coil3.compose.AsyncImage
 import io.github.aedev.flow.R
 import io.github.aedev.flow.ui.components.settings.SettingsDestination
 import io.github.aedev.flow.ui.components.settings.SettingsPage
@@ -52,13 +52,11 @@ import io.github.aedev.flow.ui.screens.settings.index.DestinationIndex
 
 private enum class AboutDialog { CHANGELOG, DEVICE, NOTICES }
 
-private const val WEBSITE_URL = "https://flow-tube.org"
-private const val GITHUB_URL = "https://github.com/Flow-Tube/Flow"
-private const val REDDIT_URL = "https://www.reddit.com/r/Flow_Official/"
-private const val CREATOR_URL = "https://github.com/A-EDev"
+private const val GITHUB_URL = "https://github.com/Mkjyyym/RTQ-NOW"
+private const val BASED_ON_URL = "https://github.com/Flow-Tube/Flow"
+private const val CREATOR_URL = "https://t.me/RTQ_67"
 private const val NEWPIPE_URL = "https://github.com/TeamNewPipe/NewPipeExtractor"
-private const val LICENSE_URL = "https://github.com/Flow-Tube/Flow/blob/main/License"
-private const val CREATOR_AVATAR_URL = "https://github.com/A-EDev.png?size=144"
+private const val LICENSE_URL = "https://github.com/Mkjyyym/RTQ-NOW/blob/main/License"
 
 private val LogoSize = 72.dp
 private val HeaderPadding = 24.dp
@@ -94,12 +92,11 @@ internal fun AboutScreen(
             )
         }
         group(key = "about.contact", header = R.string.section_contact) {
-            nav(AboutIndex.website, icon = Icons.Outlined.Public, showChevron = false, onClick = { open(WEBSITE_URL) })
             nav(AboutIndex.github, iconRes = R.drawable.ic_github, showChevron = false, onClick = { open(GITHUB_URL) })
-            nav(AboutIndex.reddit, icon = IconReddit, showChevron = false, onClick = { open(REDDIT_URL) })
         }
         group(key = "about.legal", header = R.string.section_legal) {
             nav(AboutIndex.license, icon = Icons.Outlined.Description, showChevron = false, onClick = { open(LICENSE_URL) })
+            nav(AboutIndex.basedOn, icon = Icons.Outlined.Description, showChevron = false, onClick = { open(BASED_ON_URL) })
             nav(AboutIndex.newPipe, icon = Icons.Outlined.Extension, showChevron = false, onClick = { open(NEWPIPE_URL) })
             nav(AboutIndex.notices, icon = Icons.Outlined.Gavel, showChevron = false, onClick = { dialog = AboutDialog.NOTICES })
         }
@@ -162,7 +159,6 @@ private fun CreatorRow(
     shape: Shape,
     onClick: () -> Unit,
 ) {
-    var avatarLoaded by remember { mutableStateOf(false) }
     SegmentedListItem(
         onClick = onClick,
         verticalAlignment = Alignment.CenterVertically,
@@ -173,21 +169,17 @@ private fun CreatorRow(
                 modifier = Modifier.size(AvatarSize).clip(CircleShape).background(MaterialTheme.colorScheme.surfaceContainerHighest),
                 contentAlignment = Alignment.Center,
             ) {
-                if (!avatarLoaded) {
-                    Icon(Icons.Outlined.Person, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-                AsyncImage(
-                    model = CREATOR_AVATAR_URL,
+                Image(
+                    painter = painterResource(R.drawable.developer_photo),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
-                    onSuccess = { avatarLoaded = true },
                     modifier = Modifier.matchParentSize(),
                 )
             }
         },
         overlineContent = { Text(stringResource(R.string.about_creator)) },
         supportingContent = { Text(stringResource(R.string.settings_creator_role)) },
-        trailingContent = { Icon(painterResource(R.drawable.ic_github), contentDescription = null) },
+        trailingContent = { Icon(painterResource(R.drawable.ic_telegram), contentDescription = null) },
     ) {
         Text(stringResource(R.string.about_creator_name), style = MaterialTheme.typography.titleMedium)
     }
