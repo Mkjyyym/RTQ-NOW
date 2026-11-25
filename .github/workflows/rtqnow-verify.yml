@@ -51,10 +51,3 @@ jobs:
           path: |
             shots/*.png
             dumps/*
-      - name: Publish evidence as a pre-release (built-in token)
-        if: always()
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          TAG="rtqnow-verify-${GITHUB_RUN_NUMBER}"
-          gh release create "$TAG" shots/*.png dumps/crash.txt dumps/logcat_tail.txt --repo "$GITHUB_REPOSITORY" --target "$GITHUB_SHA" --prerelease --title "RTQ NOW emulator evidence $TAG" --notes "Emulator screenshots of release rtqnow-52 universal APK. Evidence only, not an app build."
