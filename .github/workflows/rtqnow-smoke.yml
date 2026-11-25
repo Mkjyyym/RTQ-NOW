@@ -1,0 +1,137 @@
+name: RTQ NOW smoke test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Set up JDK 21
+        uses: actions/setup-java@v6
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+      - name: Build debug APK
+        run: ./gradlew :app:assembleGithubDebug
+      - name: APK sizes
+        run: ls -la app/build/outputs/apk/github/debug/
+      - name: Upload APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: rtqnow-apk
+          path: app/build/outputs/apk/github/debug/*.apk
+
+  smoke:
+    name: Emulator smoke test + screenshots
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+      - name: Download APK
+        uses: actions/download-artifact@v7
+        with:
+          name: rtqnow-apk
+          path: apk
+      - name: Prepare sample music files
+        run: |
+          mkdir -p samples shots
+          python3 - << 'PY'
+          import wave, struct, math
+          for name, freq in [("tone_alpha", 440), ("tone_beta", 550), ("tone_gamma", 660)]:
+              w = wave.open(f"samples/{name}.wav", "w")
+              w.setnchannels(1); w.setsampwidth(2); w.setframerate(22050)
+              frames = b"".join(struct.pack("<h", int(8000 * math.sin(2 * math.pi * freq * i / 22050))) for i in range(22050 * 3))
+              w.writeframes(frames); w.close()
+          PY
+      - name: Run emulator smoke test
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          arch: x86_64
+          target: default
+          disable-animations: true
+          script: |
+            set -x
+            APK=$(ls apk/*.apk | head -1)
+            echo "APK: $APK"; ls -la apk/
+            adb install -r "$APK"
+            adb shell pm list packages | grep -q app.rtqnow.debug || { echo INSTALL-FAILED; exit 1; }
+            adb shell pm grant app.rtqnow.debug android.permission.READ_MEDIA_AUDIO || true
+            adb shell pm grant app.rtqnow.debug android.permission.POST_NOTIFICATIONS || true
+            for f in samples/*.wav; do
+              b=$(basename "$f")
+              adb push "$f" "/sdcard/Music/$b"
+              adb shell am broadcast -a android.intent.action.MEDIA_SCANNER_SCAN_FILE -d "file:///sdcard/Music/$b" >/dev/null
+            done
+            sleep 6
+            ui_tap() {
+              adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
+              adb shell cat /sdcard/ui.xml > /tmp/ui.xml 2>/dev/null
+              coords=$(python3 - "$1" << 'PY'
+            import sys, re
+            want = sys.argv[1]
+            x = open('/tmp/ui.xml', encoding='utf-8', errors='ignore').read()
+            for m in re.finditer(r'<node[^>]*>', x):
+                tag = m.group(0)
+                t = re.search(r'text="([^"]*)"', tag)
+                d = re.search(r'content-desc="([^"]*)"', tag)
+                b = re.search(r'bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"', tag)
+                if b and ((t and t.group(1) == want) or (d and d.group(1) == want)):
+                    x1, y1, x2, y2 = map(int, b.groups())
+                    print(f"{(x1+x2)//2} {(y1+y2)//2}")
+                    break
+            PY
+            )
+              if [ -n "$coords" ]; then adb shell input tap $coords; echo "TAPPED $1 at $coords"; else echo "NOT-FOUND $1"; return 1; fi
+            }
+            shot() { adb exec-out screencap -p > "shots/$1.png"; echo "SHOT $1"; }
+            adb shell monkey -p app.rtqnow.debug -c android.intent.category.LAUNCHER 1
+            sleep 15
+            shot 01_launch
+            ui_tap "Music" || true
+            sleep 4
+            shot 02_music_tab
+            ui_tap "Spotify" || true
+            sleep 5
+            shot 03_spotify_screen
+            adb shell input keyevent KEYCODE_BACK
+            sleep 2
+            ui_tap "Library" || true
+            sleep 4
+            shot 04_library
+            ui_tap "Local media" || true
+            sleep 5
+            shot 05_local_media
+            ui_tap "Music" || true
+            sleep 3
+            ui_tap "Music library" || true
+            sleep 5
+            shot 06_local_library_songs
+            ui_tap "Albums" || true
+            sleep 3
+            shot 07_local_library_albums
+            ui_tap "Artists" || true
+            sleep 3
+            shot 08_local_library_artists
+            ui_tap "Songs" || true
+            sleep 2
+            ui_tap "tone_alpha" || true
+            sleep 6
+            shot 09_local_playback
+            adb logcat -d | grep -E "FATAL EXCEPTION|AndroidRuntime" && echo "CRASH-DETECTED" && exit 1
+            echo "SMOKE-OK"
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rtqnow-screenshots
+          path: shots/*.png
