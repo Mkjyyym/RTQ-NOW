@@ -90,7 +90,7 @@
         android:fullBackupOnly="true"
         android:banner="@drawable/tv_banner"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_launcher_name"
+        android:label="@string/rtqnow_app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Flow"
@@ -709,4 +709,3 @@
     </application>
 
 </manifest>
-
