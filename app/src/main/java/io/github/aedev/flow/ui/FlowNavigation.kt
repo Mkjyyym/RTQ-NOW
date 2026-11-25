@@ -543,6 +543,24 @@ fun NavGraphBuilder.flowAppGraph(
             onOpenSettings = {
                 navController.navigate("settings?target=${SettingsTarget(SettingsDestination.LOCAL_MEDIA).encode()}")
             },
+            onOpenMusicLibrary = { navController.navigate("localLibrary") },
+        )
+    }
+
+    // Organized music library (Symphony slice): songs/albums/artists over the same device music.
+    page("localLibrary") {
+        val musicPlayerViewModel = sharedMusicPlayerViewModel()
+        val libraryTitle =
+            androidx.compose.ui.res
+                .stringResource(io.github.aedev.flow.R.string.local_library_title)
+        io.github.aedev.flow.symphony.ui.SymphonyLocalLibraryScreen(
+            onBackClick = { navController.popBackStack() },
+            onPlayMusic = { items, index, shuffle ->
+                val tracks = items.map { it.toMusicTrack() }.let { if (shuffle) it.shuffled() else it }
+                val start = if (shuffle) tracks.first() else tracks[index]
+                musicPlayerViewModel.loadAndPlayTrack(start, tracks, libraryTitle)
+                onMusicStarted()
+            },
         )
     }
 
