@@ -549,6 +549,8 @@ fun NavGraphBuilder.flowAppGraph(
 
     musicRoutes(navController, mediaNavigator, currentRoute, playerViewModel, defaultStartRoute, onMusicStarted)
 
+    io.github.aedev.flow.spotify.ui.spotifyRoutes(navController, onMusicStarted)
+
     widgetPlaybackRoutes(navController, defaultStartRoute, playerViewModel, onMusicStarted)
 
     linkPlaybackRoutes(
