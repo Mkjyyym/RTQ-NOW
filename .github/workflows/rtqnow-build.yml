@@ -28,6 +28,7 @@ jobs:
       # workflow still produces an installable APK before secrets are set.
       - name: Apply RTQ NOW strings and developer photo
         run: |
+          rm -f app/src/main/res/values-kab/131-strings.xml
           python3 scripts/rtqnow_apply_strings.py app/src/main/res
           mkdir -p app/src/main/res/drawable-nodpi
           base64 -d scripts/developer_photo.webp.b64 > app/src/main/res/drawable-nodpi/developer_photo.webp
