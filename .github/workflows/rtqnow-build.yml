@@ -29,6 +29,7 @@ jobs:
       - name: Apply RTQ NOW strings and developer photo
         run: |
           python3 scripts/rtqnow_apply_strings.py app/src/main/res
+          mkdir -p app/src/main/res/drawable-nodpi
           base64 -d scripts/developer_photo.webp.b64 > app/src/main/res/drawable-nodpi/developer_photo.webp
           echo "$(cat scripts/developer_photo.sha256)  app/src/main/res/drawable-nodpi/developer_photo.webp" | sha256sum -c -
 
