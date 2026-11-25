@@ -23,7 +23,12 @@ for m in re.finditer(r'<node[^>]*>', x):
         x1, y1, x2, y2 = map(int, b.groups())
         nodes.append(((x1+x2)//2, (y1+y2)//2, x2-x1, y2-y1))
 H = max([n[1] for n in nodes] + [1])
-if mode == 'last':
+if mode == 'topright':
+    top = [n for n in nodes if n[1] < H * 0.12]
+    if top:
+        n = sorted(top, key=lambda n: n[0])[-1]
+        print(n[0], n[1])
+elif mode == 'last':
     if nodes:
         n = sorted(nodes, key=lambda n: (n[1], n[0]))[-1]
         print(n[0], n[1])
@@ -40,7 +45,9 @@ for i in 1 2 3 4 5 6 7 8; do
   adb shell cat /sdcard/ui.xml > dumps/cur.xml
   c=$(pick nav 0)
   if [ -n "$c" ]; then echo "NAV-REACHED at step $i"; break; fi
-  c=$(pick last 0)
+  c=""
+  [ $i -gt 1 ] && c=$(pick topright 0)
+  [ -z "$c" ] && c=$(pick last 0)
   [ -z "$c" ] && { echo "NO-CLICKABLE"; break; }
   adb shell input tap $c; echo "TAP primary $c"; sleep 4
   shot "02_step_$i"
@@ -51,6 +58,16 @@ for i in 0 1 2 3 4; do
   [ -z "$c" ] && break
   adb shell input tap $c; echo "TAP nav $i $c"; sleep 5
   shot "03_nav_$i"
+  adb shell cat /sdcard/ui.xml > dumps/cur.xml
+done
+for j in 1 2 3; do
+  c=$(pick topright 0)
+  [ -z "$c" ] && break
+  adb shell input tap $c; echo "TAP topright $c"; sleep 4
+  shot "04_topright_$j"
+  adb shell cat /sdcard/ui.xml > dumps/cur.xml
+  adb shell input swipe 160 500 160 150; sleep 2
+  shot "05_scrolled_$j"
   adb shell cat /sdcard/ui.xml > dumps/cur.xml
 done
 adb logcat -d | grep "FATAL EXCEPTION" > dumps/crash.txt
