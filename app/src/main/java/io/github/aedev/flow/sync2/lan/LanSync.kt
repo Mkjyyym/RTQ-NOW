@@ -266,7 +266,7 @@ class LanSync
                         if (greeter.takes(connection)) launch { accept(connection, greeter) }
                     }
                 val discovery = LanDiscovery(context)
-                val name = "Flow-" + SyncBytes.toHex(SyncCrypto.randomBytes(2))
+                val name = "NOW-" + SyncBytes.toHex(SyncCrypto.randomBytes(2))
                 names += name
                 try {
                     val port = server.listenOnLastPort(context)
